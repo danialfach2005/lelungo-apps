@@ -8,9 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useInViewAnimation, revealVariants } from '@/hooks/use-in-view-animation';
 import { SmartSearchBar } from '@/components/SmartSearchBar';
-import { AIInsightFeed } from '@/components/AIInsightFeed';
-import { SocialProofCarousel } from '@/components/SocialProofCarousel';
-import { FloatingCTA } from '@/components/FloatingCTA';
+import dynamic from 'next/dynamic';
+
+const AIInsightFeed = dynamic(() => import('@/components/AIInsightFeed').then(mod => mod.AIInsightFeed), { ssr: false });
+const SocialProofCarousel = dynamic(() => import('@/components/SocialProofCarousel').then(mod => mod.SocialProofCarousel), { ssr: false });
+const FloatingCTA = dynamic(() => import('@/components/FloatingCTA').then(mod => mod.FloatingCTA), { ssr: false });
 
 export default function HomePage() {
   const { scrollY, scrollYProgress } = useScroll();

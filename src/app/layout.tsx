@@ -10,19 +10,25 @@ const inter = Inter({
   display: 'swap',
 });
 
+export const revalidate = 3600; // ISR caching
+
 export const metadata: Metadata = {
-  title: {
-    default: 'Lelungo — Discover Travel Deals',
-    template: '%s | Lelungo',
-  },
-  description:
-    'Find the best flight and hotel deals. Compare prices, discover hidden discounts, and book with confidence.',
-  keywords: ['travel deals', 'cheap flights', 'hotel discounts', 'travel affiliate', 'Bali flights'],
+  title: 'Lelungo — Discover Hidden Travel Deals',
+  description: 'Find cheap flights, hotels, and hidden travel deals powered by AI.',
+  keywords: ['travel deals', 'cheap flights', 'hotel discounts', 'travel affiliate', 'AI travel'],
   openGraph: {
-    title: 'Lelungo — Discover Travel Deals',
-    description: 'Find flights & hotels at prices you didn\'t know existed.',
+    title: 'Lelungo — Discover Hidden Travel Deals',
+    description: 'Find cheap flights, hotels, and hidden travel deals powered by AI.',
     siteName: 'Lelungo',
     type: 'website',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Lelungo Preview',
+      },
+    ],
   },
 };
 
