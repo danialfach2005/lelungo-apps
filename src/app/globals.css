@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: 'Inter', sans-serif;
+    
+    /* Light Mode Variables - Clean & Premium (Stripe feel) */
+    --background: 0 0% 99%;
+    --foreground: 240 10% 12%;
+    --card: 0 0% 100%;
+    --border: 240 6% 90%;
+    --muted: 240 5% 55%;
+    
+    /* Premium sunset orange */
+    --primary: 15 85% 55%; 
+    --primary-foreground: 0 0% 100%;
+    
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 10% 12%;
+
+    /* Brand Gradient */
+    --gradient-start: 15 85% 55%;
+    --gradient-end: 15 85% 45%;
+  }
+
+  .dark {
+    /* Dark Mode Variables - Luxury Fintech */
+    --background: 224 41% 7%; /* Deep Navy #0B0F1A */
+    --foreground: 0 0% 100%;
+    --card: 224 37% 11%;
+    --border: 224 25% 18%;
+    --muted: 224 15% 65%;
+    
+    /* Gold/Amber Accent */
+    --primary: 45 93% 47%;
+    --primary-foreground: 224 41% 7%; /* Dark navy text on gold */
+    
+    --accent: 224 30% 15%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Brand Gradient: Gold to Purple */
+    --gradient-start: 45 93% 47%;
+    --gradient-end: 270 60% 50%;
+  }
+
+  * { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    @apply transition-colors duration-200;
+  }
+
+  /* Premium scrollbar */
+  ::-webkit-scrollbar       { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted)); }
+
+  ::selection { background: hsl(var(--primary) / 0.2); color: inherit; }
+}
+
+@layer components {
+  /* ── Input ───────────────────────────────────── */
+  .input-base {
+    @apply w-full bg-card border border-border
+           rounded-xl px-4 py-3 text-sm text-foreground
+           placeholder:text-muted
+           outline-none focus:border-primary focus:ring-4 focus:ring-primary/10
+           transition-all duration-200 shadow-sm hover:shadow-md;
+  }
+
+  /* ── Gradient text ───────────────────────────── */
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, #d64a1e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Section heading ─────────────────────────── */
+  .section-label {
+    @apply text-xs font-semibold uppercase tracking-widest text-primary;
+  }
+}
+
+@layer utilities {
+  /* Ambient orb for hero */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+  }
+}
+
+/* ── Dotted pattern overlay ── */
+.dot-pattern {
+  background-image: radial-gradient(color-mix(in srgb, hsl(var(--foreground)) 4%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
