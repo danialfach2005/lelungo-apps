@@ -33,6 +33,7 @@ export const metadata: Metadata = {
 };
 
 import { Footer } from '@/components/Footer';
+import { HydrationErrorBoundary } from '@/components/HydrationErrorBoundary';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: getThemeScript() }} />
       </head>
       <body className={`${inter.variable} font-sans bg-background text-foreground antialiased min-h-screen flex flex-col`}>
+        <HydrationErrorBoundary />
         <ThemeProvider>
           {children}
           <Footer />
