@@ -61,6 +61,7 @@ export function DealCard({ deal }: DealCardProps) {
       whileHover={{ y: -4, scale: 1.01 }}
       className="glass-card flex flex-col group cursor-pointer hover:shadow-card-hover overflow-hidden transition-all duration-300 border border-border/50"
       onClick={handleClick}
+      data-testid="deal-card"
     >
       {/* ── High Quality Image (Parallax) ──────────── */}
       <div className="relative h-60 w-full overflow-hidden bg-muted/20">
@@ -114,7 +115,7 @@ export function DealCard({ deal }: DealCardProps) {
                 <Star className="w-3 h-3 fill-primary text-primary" />
                 <span className="text-xs font-bold text-primary">{deal.rating}</span>
               </div>
-              <span className="text-xs text-foreground/50">{deal.reviewCount?.toLocaleString()} reviews</span>
+              <span className="text-xs text-foreground/50">{deal.reviewCount?.toLocaleString('en-US')} reviews</span>
             </div>
           ) : (
             <div className="flex items-center gap-3 text-xs text-foreground/60 font-medium">
@@ -167,6 +168,7 @@ export function DealCard({ deal }: DealCardProps) {
             disabled={loading}
             onClick={(e) => { e.stopPropagation(); handleClick(); }}
             className="relative w-full overflow-hidden bg-primary text-primary-foreground font-bold py-3.5 rounded-xl shadow-glow transition-all hover:bg-primary/90 hover:shadow-glow-active flex items-center justify-center group/btn"
+            data-testid="cta-book"
           >
             {/* Ripple sweep effect via pseudo-element */}
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out" />

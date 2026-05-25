@@ -52,7 +52,7 @@ function AIInsightCard({ insight }: { insight: AIInsight }) {
       </div>
 
       <div className="w-full md:w-auto">
-        <Button className="w-full md:w-auto group-hover:bg-primary/90 transition-all">
+        <Button className="w-full md:w-auto group-hover:bg-primary/90 transition-all" data-testid="ai-insight-view-deal">
           View Deal
           <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
         </Button>

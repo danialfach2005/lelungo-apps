@@ -42,6 +42,7 @@ export function FilterBar({ active, onChange, counts }: FilterBarProps) {
           <button
             key={f.id}
             id={`filter-${f.id}`}
+            data-testid={`filter-${f.id}`}
             onClick={() => handleClick(f.id)}
             data-active={isActive}
             disabled={disabledId === f.id}
