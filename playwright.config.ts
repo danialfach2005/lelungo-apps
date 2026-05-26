@@ -28,8 +28,11 @@ export default defineConfig({
     /* Run headless in CI, but not locally */
     headless: !!process.env.CI,
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    /* Collect trace always on failure. See https://playwright.dev/docs/trace-viewer */
+    trace: 'on',
+    
+    /* Take screenshots on failure */
+    screenshot: 'only-on-failure',
     
     /* Retain video on failure */
     video: 'retain-on-failure',

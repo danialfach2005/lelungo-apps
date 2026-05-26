@@ -97,7 +97,7 @@ export function Navbar() {
         <motion.nav 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="sm:hidden border-t border-border bg-card/95 backdrop-blur-xl py-2 px-4 shadow-xl"
+          className="sm:hidden absolute top-full left-0 right-0 w-full z-[100] border-t border-border bg-background/95 backdrop-blur-2xl py-2 px-4 shadow-2xl pb-6"
         >
           {links.map((l) => (
             <Link

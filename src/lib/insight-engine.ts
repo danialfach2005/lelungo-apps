@@ -16,15 +16,14 @@ function hashStr(str: string): number {
   return Math.abs(h);
 }
 
-// Get seats left — deterministic based on deal id + day of week
+// Get seats left — deterministic based strictly on deal id
 function getSeatsLeft(dealId: string): number {
-  const dayOfWeek = new Date().getDay(); // 0-6
-  const hash = hashStr(dealId + String(dayOfWeek));
+  const hash = hashStr(dealId + 'seats');
   const base = (hash % 18) + 1; // 1-18
   return base;
 }
 
-// Get booked today count — deterministic
+// Get booked today count — deterministic based strictly on deal id
 function getBookedToday(dealId: string): number {
   const hash = hashStr(dealId + 'booked');
   const base = (hash % 150) + 12; // 12-161 booked today

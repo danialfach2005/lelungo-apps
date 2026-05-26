@@ -53,7 +53,22 @@ export function SmartSearchBar() {
         
         {/* Search Button */}
         <div className="w-full sm:w-auto mt-2 sm:mt-0 sm:ml-2">
-          <Button size="lg" className="w-full sm:w-auto h-[60px] px-8 rounded-xl animate-pulse-slow relative overflow-hidden group">
+          <Button 
+            size="lg" 
+            className="w-full sm:w-auto h-[60px] px-8 rounded-xl animate-pulse-slow relative overflow-hidden group"
+            onClick={async () => {
+              try {
+                // Fetching /api/deals, which now safely returns 200 without timeout
+                const res = await fetch('/api/deals');
+                if (res.ok) {
+                  // In a real app we'd dispatch these to a context or state
+                  console.log('Deals loaded successfully', await res.json());
+                }
+              } catch (err) {
+                console.error(err);
+              }
+            }}
+          >
             {/* Subtle sweep effect on hover inside the button */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[150%] group-hover:animate-[shimmer_1.5s_infinite]" />
             <Search className="w-5 h-5 mr-2 relative z-10" />

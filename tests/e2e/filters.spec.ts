@@ -1,8 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { test, waitForStableUI } from './test-utils';
+import { expect } from '@playwright/test';
 
 test.describe('Filter Button', () => {
   test('should filter deals without flicker or layout shift', async ({ page }) => {
     await page.goto('/');
+    await waitForStableUI(page);
 
     const allBtn = page.getByTestId('filter-all');
     const flightBtn = page.getByTestId('filter-flight');
@@ -11,21 +13,18 @@ test.describe('Filter Button', () => {
     // Wait for deals to load
     await expect(page.getByTestId('deal-card').first()).toBeVisible();
     
-    // Foolproof hydration check: wait for ThemeToggle SVG to render (only happens after client mount)
-    await page.locator('button[aria-label="Toggle theme"] svg').first().waitFor({ state: 'visible' });
-
     // Take screenshot BEFORE click
     await page.screenshot({ path: 'before-filter.png' });
 
-    // Click flight using native DOM click to bypass sticky header interference
-    await flightBtn.evaluate(node => node.click());
+    // Click flight using Playwright's click (animations disabled via test-utils)
+    await flightBtn.click();
     
     // Assert active state changes correctly
     await expect(flightBtn).toHaveAttribute('data-active', 'true');
     await expect(allBtn).toHaveAttribute('data-active', 'false');
 
-    // Check no text flicker or layout shift by taking screenshot AFTER click
-    await page.waitForTimeout(500); // Wait for transition
+    // Wait for network/UI stability instead of arbitrary timeout
+    await waitForStableUI(page);
     await page.screenshot({ path: 'after-flight-filter.png' });
 
     // Click hotel
@@ -36,6 +35,7 @@ test.describe('Filter Button', () => {
 
   test('Stability Test (Anti-Glitch) - rapid click filters', async ({ page }) => {
     await page.goto('/');
+    await waitForStableUI(page);
     
     const allBtn = page.getByTestId('filter-all');
     const flightBtn = page.getByTestId('filter-flight');
@@ -43,12 +43,15 @@ test.describe('Filter Button', () => {
 
     await expect(flightBtn).toBeVisible();
 
-    // Rapid click 5 times using native DOM clicks to avoid sticky header interference
+    // Rapid click using normal clicks now that animations are disabled
     for (let i = 0; i < 5; i++) {
-      await flightBtn.evaluate(n => n.click());
-      await hotelBtn.evaluate(n => n.click());
-      await allBtn.evaluate(n => n.click());
+      await flightBtn.click();
+      await hotelBtn.click();
+      await allBtn.click();
     }
+
+    // Wait for stability
+    await waitForStableUI(page);
 
     // Assert no crash / no UI glitch
     await expect(page.getByTestId('deal-card').first()).toBeVisible();

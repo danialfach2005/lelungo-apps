@@ -1,21 +1,26 @@
-import { test, expect } from '@playwright/test';
+import { test, waitForStableUI } from './test-utils';
+import { expect } from '@playwright/test';
 
 test.describe('Interactions', () => {
   test('AI Insight Click - redirect works', async ({ page }) => {
     await page.goto('/');
+    await waitForStableUI(page);
 
-    // 1. Scroll window down to trigger the lazy-loaded component
-    await page.evaluate(() => window.scrollBy(0, 1500));
+    // Instead of arbitrary scrollBy, we scroll to the footer or element specifically
+    // Since AIInsightFeed is lazy loaded and might be at the bottom:
+    const aiInsightContainer = page.locator('.max-w-4xl').filter({ hasText: 'AI Confidence' }).first();
     
-    // 2. Wait for the element to be ATTACHED to the DOM (ssr: false means it might take a moment)
+    // Fallback: Just scroll the page to trigger intersection observer
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await waitForStableUI(page);
+
     const viewDealBtn = page.getByTestId('ai-insight-view-deal').first();
-    await viewDealBtn.waitFor({ state: 'attached' });
     
-    // 3. Scroll it into the center to trigger framer-motion's whileInView
-    await viewDealBtn.evaluate(node => node.scrollIntoView({ block: 'center' }));
-    
-    // 4. Wait for framer-motion to animate opacity from 0 to 1
-    await expect(viewDealBtn).toBeVisible({ timeout: 10000 });
+    // Scroll element into view properly using Playwright
+    await viewDealBtn.scrollIntoViewIfNeeded();
+
+    // With animations disabled, it should be visible immediately after scrolling and network idle
+    await expect(viewDealBtn).toBeVisible();
 
     // Ensure it is clickable without errors
     await viewDealBtn.click();
@@ -23,6 +28,7 @@ test.describe('Interactions', () => {
 
   test('Deal Card Test', async ({ page }) => {
     await page.goto('/');
+    await waitForStableUI(page);
 
     const firstDeal = page.getByTestId('deal-card').first();
     await expect(firstDeal).toBeVisible();
@@ -31,7 +37,6 @@ test.describe('Interactions', () => {
     const priceText = firstDeal.locator('text=IDR').first();
     await expect(priceText).toBeVisible();
 
-    // Ensure discount badge or some other indicators are visible if they exist
     // Check CTA button
     const ctaBook = firstDeal.getByTestId('cta-book');
     await expect(ctaBook).toBeVisible();
@@ -40,9 +45,11 @@ test.describe('Interactions', () => {
 
   test('Scroll Interaction', async ({ page }) => {
     await page.goto('/');
+    await waitForStableUI(page);
 
-    // Scroll page down
-    await page.evaluate(() => window.scrollBy(0, 1000));
+    // Scroll to bottom
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await waitForStableUI(page);
     
     // Assert cards appear (not broken) and no animation glitch
     const dealCards = page.getByTestId('deal-card');
@@ -56,14 +63,14 @@ test.describe('Interactions', () => {
 
   test('Dark Mode Toggle', async ({ page }) => {
     await page.goto('/');
+    await waitForStableUI(page);
 
     const themeToggle = page.locator('button[aria-label="Toggle theme"]');
-    // Wait for hydration (SVG icon only renders after React mounts)
-    await themeToggle.locator('svg').waitFor({ state: 'visible' });
     await expect(themeToggle).toBeVisible();
 
     // Switch theme
     await themeToggle.click();
+    await waitForStableUI(page);
 
     // Ensure no broken UI
     await expect(page.getByTestId('deal-card').first()).toBeVisible();

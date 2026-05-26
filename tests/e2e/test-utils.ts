@@ -1,0 +1,64 @@
+import { Page, expect } from '@playwright/test';
+import { test as baseTest } from '@playwright/test';
+
+/**
+ * Defensive test fixture setup.
+ * - Automatically throws if there's a console error or warning about hydration.
+ * - Disables CSS animations globally for stability.
+ */
+export const test = baseTest.extend({
+  page: async ({ page }, use) => {
+    const errors: string[] = [];
+
+    // Catch all page uncaught exceptions
+    page.on('pageerror', (exception) => {
+      errors.push(`PageError: ${exception.message}`);
+    });
+
+    // Catch specific console errors (like hydration)
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        const text = msg.text();
+        // Ignore specific harmless warnings if needed, else push all
+        if (
+          !text.includes('404') && 
+          !text.includes('Failed to load resource') &&
+          !text.includes('favicon.ico')
+        ) {
+          errors.push(`Console Error: ${text}`);
+        }
+      }
+    });
+
+    // Disable all CSS animations and transitions for testing stability
+    await page.addInitScript(() => {
+      const style = document.createElement('style');
+      style.textContent = `
+        *, *::before, *::after {
+          transition: none !important;
+          animation: none !important;
+        }
+      `;
+      document.head.appendChild(style);
+    });
+
+    await use(page);
+
+    // After test ends, assert no errors were caught
+    if (errors.length > 0) {
+      throw new Error(`Test failed due to caught errors:\n${errors.join('\n')}`);
+    }
+  },
+});
+
+/**
+ * Ensures the UI is stable by waiting for the network to be idle
+ * and checking for common UI placeholders or loaders to disappear.
+ */
+export async function waitForStableUI(page: Page) {
+  // Wait for all network requests to finish
+  await page.waitForLoadState('networkidle');
+  
+  // Optional: If there's a global loader, wait for it to be hidden
+  // e.g. await expect(page.locator('.loader')).toBeHidden();
+}

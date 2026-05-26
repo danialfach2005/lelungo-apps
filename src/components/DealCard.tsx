@@ -8,6 +8,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import type { EnrichedDeal } from '@/types';
 import { formatIDR } from '@/lib/insight-engine';
 import { formatNumber } from '@/lib/format';
+import { HydrationGuard } from './HydrationGuard';
 
 interface DealCardProps {
   deal: EnrichedDeal;
@@ -116,7 +117,9 @@ export function DealCard({ deal }: DealCardProps) {
                 <Star className="w-3 h-3 fill-primary text-primary" />
                 <span className="text-xs font-bold text-primary">{deal.rating}</span>
               </div>
-              <span className="text-xs text-foreground/50">{deal.reviewCount ? formatNumber(deal.reviewCount) : 0} reviews</span>
+              <HydrationGuard fallback={<span className="text-xs text-foreground/50">0 reviews</span>}>
+                <span className="text-xs text-foreground/50">{deal.reviewCount ? formatNumber(deal.reviewCount) : 0} reviews</span>
+              </HydrationGuard>
             </div>
           ) : (
             <div className="flex items-center gap-3 text-xs text-foreground/60 font-medium">

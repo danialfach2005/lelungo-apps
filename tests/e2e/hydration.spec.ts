@@ -1,50 +1,22 @@
-import { test, expect } from '@playwright/test';
+import { test, waitForStableUI } from './test-utils';
+import { expect } from '@playwright/test';
 
 test.describe('Hydration Mismatch Defense', () => {
   test('should not have any hydration errors on the homepage with non-US locale', async ({ page, context }) => {
-    const errors: string[] = [];
-
-    // Capture console errors
-    page.on('console', (msg) => {
-      if (msg.type() === 'error' || msg.type() === 'warning') {
-        const text = msg.text();
-        if (
-          text.includes('hydration') ||
-          text.includes('did not match') ||
-          text.includes('Minified React error #418') ||
-          text.includes('Minified React error #423')
-        ) {
-          errors.push(text);
-        }
-      }
-    });
-
-    // Capture page errors (uncaught exceptions)
-    page.on('pageerror', (exception) => {
-      const text = exception.message;
-      if (
-        text.includes('hydration') ||
-        text.includes('did not match') ||
-        text.includes('Minified React error #418') ||
-        text.includes('Minified React error #423')
-      ) {
-        errors.push(text);
-      }
-    });
-
+    // Note: The global test wrapper already catches and throws on hydration errors,
+    // so we just need to load the page and wait for it to be stable.
+    
     // Simulate non-US locale where `toLocaleString` might output differently
     await context.setExtraHTTPHeaders({
       'Accept-Language': 'de-DE,de;q=0.9',
     });
 
-    // We can also force timezone if needed, but locale is sufficient for toLocaleString issues.
-    
     await page.goto('/');
 
-    // Wait a bit for React to hydrate
-    await page.waitForTimeout(1000);
+    // Wait for React to fully hydrate and all network to settle
+    await waitForStableUI(page);
 
-    // Fail the test if any hydration errors were caught
-    expect(errors, `Expected 0 hydration errors, but found: ${errors.join(' | ')}`).toHaveLength(0);
+    // If we reached here without the global error handler throwing, the test passes.
+    expect(true).toBe(true);
   });
 });
