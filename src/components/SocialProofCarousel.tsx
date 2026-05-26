@@ -46,6 +46,20 @@ const TESTIMONIALS = [
 // Duplicate for infinite scroll loop
 const LOOPED_TESTIMONIALS = [...TESTIMONIALS, ...TESTIMONIALS];
 
+function AvatarImage({ src, alt }: { src: string; alt: string }) {
+  const [imgSrc, setImgSrc] = React.useState(src);
+  return (
+    <Image
+      src={imgSrc || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=150&h=150&q=80'}
+      alt={alt}
+      fill
+      className="object-cover"
+      sizes="48px"
+      onError={() => setImgSrc('https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=150&h=150&q=80')}
+    />
+  );
+}
+
 export function SocialProofCarousel() {
   return (
     <div className="w-full py-16 overflow-hidden">
@@ -101,7 +115,7 @@ export function SocialProofCarousel() {
             >
               <div className="flex items-center gap-4 mb-4">
                 <div className="relative w-12 h-12 rounded-full overflow-hidden border border-border">
-                  <Image src={t.image} alt={t.name} fill className="object-cover" sizes="48px" />
+                  <AvatarImage src={t.image} alt={t.name} />
                 </div>
                 <div>
                   <h4 className="font-bold text-base leading-tight text-foreground">{t.name}</h4>

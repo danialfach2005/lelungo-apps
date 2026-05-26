@@ -19,6 +19,8 @@ export function DealCard({ deal }: DealCardProps) {
   const { insight } = deal;
   const ref = useRef<HTMLElement>(null);
 
+  const [imgSrc, setImgSrc] = useState(deal.image);
+
   // Parallax logic
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -61,7 +63,7 @@ export function DealCard({ deal }: DealCardProps) {
         visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 20 } }
       }}
       whileHover={{ y: -4, scale: 1.01 }}
-      className="glass-card flex flex-col group cursor-pointer hover:shadow-card-hover overflow-hidden transition-all duration-300 border border-border/50"
+      className="glass-card relative flex flex-col group cursor-pointer hover:shadow-card-hover overflow-hidden transition-all duration-300 border border-border/50"
       onClick={handleClick}
       data-testid="deal-card"
     >
@@ -69,11 +71,12 @@ export function DealCard({ deal }: DealCardProps) {
       <div className="relative h-60 w-full overflow-hidden bg-muted/20">
         <motion.div style={{ y: imageY }} className="absolute inset-[-10%] w-[120%] h-[120%]">
           <Image
-            src={deal.image}
+            src={imgSrc || 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80'}
             alt={deal.title}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            onError={() => setImgSrc('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80')}
           />
         </motion.div>
         

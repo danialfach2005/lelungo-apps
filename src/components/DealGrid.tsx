@@ -63,7 +63,7 @@ export function DealGrid() {
               variants={staggerContainerVariants}
               initial="hidden"
               animate={isInView ? "visible" : "hidden"}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+              className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
             >
               {filteredDeals.map((deal) => (
                 <DealCard key={deal.id} deal={deal} />

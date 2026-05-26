@@ -115,7 +115,7 @@ export const MOCK_DEALS: Deal[] = [
     origin: 'Jakarta',
     originCode: 'CGK',
     country: 'China SAR',
-    image: 'https://images.unsplash.com/photo-1506148604580-8ca5c1d8c32c?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&q=80', // Fixed 404 image
     price: 2900000,
     currency: 'IDR',
     affiliateUrl: 'https://www.tiket.com/pesawat',
