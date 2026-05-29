@@ -8,7 +8,6 @@ import {
   MousePointerClick, Plane, Hotel, TrendingUp,
   BarChart3, MapPin, Star,
 } from 'lucide-react';
-import type { EnrichedDeal } from '@/types';
 import { formatIDR } from '@/lib/insight-engine';
 
 // Simple bar component

@@ -16,10 +16,6 @@ Error: Test failed due to caught errors:
 PageError: Cannot read properties of null (reading 'appendChild')
 ```
 
-```
-Tearing down "context" exceeded the test timeout of 30000ms.
-```
-
 # Page snapshot
 
 ```yaml
@@ -668,4 +664,75 @@ Tearing down "context" exceeded the test timeout of 30000ms.
           - generic [ref=e880]: Jakarta, ID
           - generic [ref=e882]: Operational
   - alert [ref=e883]
+```
+
+# Test source
+
+```ts
+  1  | import { Page, expect } from '@playwright/test';
+  2  | import { test as baseTest } from '@playwright/test';
+  3  | 
+  4  | /**
+  5  |  * Defensive test fixture setup.
+  6  |  * - Automatically throws if there's a console error or warning about hydration.
+  7  |  * - Disables CSS animations globally for stability.
+  8  |  */
+  9  | export const test = baseTest.extend({
+  10 |   page: async ({ page }, use) => {
+  11 |     const errors: string[] = [];
+  12 | 
+  13 |     // Catch all page uncaught exceptions
+  14 |     page.on('pageerror', (exception) => {
+  15 |       errors.push(`PageError: ${exception.message}`);
+  16 |     });
+  17 | 
+  18 |     // Catch specific console errors (like hydration)
+  19 |     page.on('console', (msg) => {
+  20 |       if (msg.type() === 'error') {
+  21 |         const text = msg.text();
+  22 |         // Ignore specific harmless warnings if needed, else push all
+  23 |         if (
+  24 |           !text.includes('404') && 
+  25 |           !text.includes('Failed to load resource') &&
+  26 |           !text.includes('favicon.ico')
+  27 |         ) {
+  28 |           errors.push(`Console Error: ${text}`);
+  29 |         }
+  30 |       }
+  31 |     });
+  32 | 
+  33 |     // Disable all CSS animations and transitions for testing stability
+  34 |     await page.addInitScript(() => {
+  35 |       const style = document.createElement('style');
+  36 |       style.textContent = `
+  37 |         *, *::before, *::after {
+  38 |           transition: none !important;
+  39 |           animation: none !important;
+  40 |         }
+  41 |       `;
+  42 |       document.head.appendChild(style);
+  43 |     });
+  44 | 
+  45 |     await use(page);
+  46 | 
+  47 |     // After test ends, assert no errors were caught
+  48 |     if (errors.length > 0) {
+> 49 |       throw new Error(`Test failed due to caught errors:\n${errors.join('\n')}`);
+     |             ^ Error: Test failed due to caught errors:
+  50 |     }
+  51 |   },
+  52 | });
+  53 | 
+  54 | /**
+  55 |  * Ensures the UI is stable by waiting for the network to be idle
+  56 |  * and checking for common UI placeholders or loaders to disappear.
+  57 |  */
+  58 | export async function waitForStableUI(page: Page) {
+  59 |   // Wait for all network requests to finish
+  60 |   await page.waitForLoadState('networkidle');
+  61 |   
+  62 |   // Optional: If there's a global loader, wait for it to be hidden
+  63 |   // e.g. await expect(page.locator('.loader')).toBeHidden();
+  64 | }
+  65 | 
 ```
